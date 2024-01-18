@@ -4450,6 +4450,18 @@
             DISPATCH();
         }
 
+        TARGET(MAKE_DEFER) {
+            frame->instr_ptr = next_instr;
+            next_instr += 1;
+            INSTRUCTION_STATS(MAKE_DEFER);
+            PyObject *func;
+            PyObject *defer;
+            func = stack_pointer[-1];
+            defer = PyDefer_New(func);
+            stack_pointer[-1] = defer;
+            DISPATCH();
+        }
+
         TARGET(MAKE_FUNCTION) {
             frame->instr_ptr = next_instr;
             next_instr += 1;

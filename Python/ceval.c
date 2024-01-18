@@ -1571,7 +1571,10 @@ initialize_locals(PyThreadState *tstate, PyFunctionObject *func,
             for (; i < defcount; i++) {
                 if (localsplus[m+i] == NULL) {
                     PyObject *def = defs[i];
-                    localsplus[m+i] = Py_NewRef(def);
+                    if (PyDefer_Check(def)) {
+                        localsplus[m+i] = PyDefer_Get(def);
+                    } else {
+                        localsplus[m+i] = Py_NewRef(def);}
                 }
             }
         }
@@ -1590,7 +1593,10 @@ initialize_locals(PyThreadState *tstate, PyFunctionObject *func,
                     goto fail_post_args;
                 }
                 if (def) {
-                    localsplus[i] = def;
+                    if (PyDefer_Check(def)) {
+                        localsplus[i] = PyDefer_Get(def);
+                    } else {
+                        localsplus[i] = Py_NewRef(def);}
                     continue;
                 }
             }

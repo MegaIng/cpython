@@ -3024,6 +3024,50 @@ compiler_lambda(struct compiler *c, expr_ty e)
 }
 
 static int
+compiler_defer(struct compiler *c, expr_ty e)
+{
+    PyCodeObject *co;
+    assert(e->kind == Defer_kind);
+
+    location loc = LOC(e);
+
+    _Py_DECLARE_STR(anon_defer, "<defer>");
+    RETURN_IF_ERROR(
+            compiler_enter_scope(c, &_Py_STR(anon_defer), COMPILER_SCOPE_LAMBDA,
+                                 (void *)e, e->lineno));
+
+    /* Make None the first constant, so the lambda can't have a
+       docstring. */
+    RETURN_IF_ERROR(compiler_add_const(c->c_const_cache, c->u, Py_None));
+
+    c->u->u_metadata.u_argcount = 0;
+    c->u->u_metadata.u_posonlyargcount = 0;
+    c->u->u_metadata.u_kwonlyargcount = 0;
+    VISIT_IN_SCOPE(c, expr, e->v.Defer.value);
+    if (c->u->u_ste->ste_generator) {
+        co = optimize_and_assemble(c, 0);
+    }
+    else {
+        location loc = LOCATION(e->lineno, e->lineno, 0, 0);
+        ADDOP_IN_SCOPE(c, loc, RETURN_VALUE);
+        co = optimize_and_assemble(c, 1);
+    }
+    compiler_exit_scope(c);
+    if (co == NULL) {
+        return ERROR;
+    }
+
+    if (compiler_make_closure(c, loc, co, 0) < 0) {
+        Py_DECREF(co);
+        return ERROR;
+    }
+    ADDOP(c, loc, MAKE_DEFER)
+    Py_DECREF(co);
+
+    return SUCCESS;
+}
+
+static int
 compiler_if(struct compiler *c, stmt_ty s)
 {
     jump_target_label next;
@@ -6149,6 +6193,8 @@ compiler_visit_expr1(struct compiler *c, expr_ty e)
         break;
     case Lambda_kind:
         return compiler_lambda(c, e);
+    case Defer_kind:
+        return compiler_defer(c, e);
     case IfExp_kind:
         return compiler_ifexp(c, e);
     case Dict_kind:

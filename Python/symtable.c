@@ -2141,6 +2141,28 @@ symtable_visit_expr(struct symtable *st, expr_ty e)
             VISIT_QUIT(st, 0);
         break;
     }
+    case Defer_kind: {
+        if (st->st_cur->ste_can_see_class_scope) {
+            // gh-109118
+            PyErr_Format(PyExc_SyntaxError,
+                         "Cannot use lambda in annotation scope within class scope");
+            PyErr_RangedSyntaxLocationObject(st->st_filename,
+                                             e->lineno,
+                                             e->col_offset + 1,
+                                             e->end_lineno,
+                                             e->end_col_offset + 1);
+            VISIT_QUIT(st, 0);
+        }
+        if (!symtable_enter_block(st, &_Py_ID(defer),
+                                  FunctionBlock, (void *)e,
+                                  e->lineno, e->col_offset,
+                                  e->end_lineno, e->end_col_offset))
+            VISIT_QUIT(st, 0);
+        VISIT(st, expr, e->v.Defer.value);
+        if (!symtable_exit_block(st))
+            VISIT_QUIT(st, 0);
+        break;
+    }
     case IfExp_kind:
         VISIT(st, expr, e->v.IfExp.test);
         VISIT(st, expr, e->v.IfExp.body);

@@ -537,6 +537,7 @@ extern "C" {
 }
 
 #define _Py_str_literals_INIT { \
+    INIT_STR(anon_defer, "<defer>"), \
     INIT_STR(anon_dictcomp, "<dictcomp>"), \
     INIT_STR(anon_genexpr, "<genexpr>"), \
     INIT_STR(anon_lambda, "<lambda>"), \
@@ -876,6 +877,7 @@ extern "C" {
     INIT_ID(decoder), \
     INIT_ID(default), \
     INIT_ID(defaultaction), \
+    INIT_ID(defer), \
     INIT_ID(delete), \
     INIT_ID(depth), \
     INIT_ID(detect_types), \

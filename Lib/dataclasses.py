@@ -530,6 +530,10 @@ def _field_init(f, frozen, globals, self_name, slots):
             if slots and f.default is not MISSING:
                 globals[default_name] = f.default
                 value = default_name
+            elif isinstance(f.default, types.DeferType):
+                # If this is a defer expression, unpack it and assign
+                globals[default_name] = f.default
+                value = f"{default_name}()"
             else:
                 # This field does not need initialization: reading from it will
                 # just use the class attribute that contains the default.

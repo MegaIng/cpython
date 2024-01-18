@@ -3791,6 +3791,12 @@ dummy_func(
             func = (PyObject *)func_obj;
         }
 
+
+        inst(MAKE_DEFER, (func -- defer)) {
+
+            defer = PyDefer_New(func);
+        }
+
         inst(SET_FUNCTION_ATTRIBUTE, (attr, func -- func)) {
             assert(PyFunction_Check(func));
             PyFunctionObject *func_obj = (PyFunctionObject *)func;

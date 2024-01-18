@@ -308,6 +308,9 @@ validate_expr(struct validator *state, expr_ty exp, expr_context_ty ctx)
     COMP(SetComp)
     COMP(GeneratorExp)
 #undef COMP
+    case Defer_kind:
+        ret = validate_expr(state, exp->v.Defer.value, Load);
+        break;
     case DictComp_kind:
         ret = validate_comprehension(state, exp->v.DictComp.generators) &&
             validate_expr(state, exp->v.DictComp.key, Load) &&

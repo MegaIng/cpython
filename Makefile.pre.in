@@ -488,6 +488,7 @@ OBJECT_OBJS=	\
 		Objects/call.o \
 		Objects/capsule.o \
 		Objects/cellobject.o \
+		Objects/deferobject.o \
 		Objects/classobject.o \
 		Objects/codeobject.o \
 		Objects/complexobject.o \
@@ -1746,6 +1747,7 @@ PYTHON_HEADERS= \
 		$(srcdir)/Include/cpython/bytearrayobject.h \
 		$(srcdir)/Include/cpython/bytesobject.h \
 		$(srcdir)/Include/cpython/cellobject.h \
+		$(srcdir)/Include/cpython/deferobject.h \
 		$(srcdir)/Include/cpython/ceval.h \
 		$(srcdir)/Include/cpython/classobject.h \
 		$(srcdir)/Include/cpython/code.h \

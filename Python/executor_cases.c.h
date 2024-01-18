@@ -3158,6 +3158,15 @@
             break;
         }
 
+        case _MAKE_DEFER: {
+            PyObject *func;
+            PyObject *defer;
+            func = stack_pointer[-1];
+            defer = PyDefer_New(func);
+            stack_pointer[-1] = defer;
+            break;
+        }
+
         case _SET_FUNCTION_ATTRIBUTE: {
             PyObject *func;
             PyObject *attr;

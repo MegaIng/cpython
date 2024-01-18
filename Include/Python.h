@@ -87,6 +87,7 @@
 #include "traceback.h"
 #include "sliceobject.h"
 #include "cpython/cellobject.h"
+#include "cpython/deferobject.h"
 #include "iterobject.h"
 #include "cpython/initconfig.h"
 #include "pystate.h"

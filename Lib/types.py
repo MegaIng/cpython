@@ -15,6 +15,7 @@ LambdaType = type(lambda: None)         # Same as FunctionType
 CodeType = type(_f.__code__)
 MappingProxyType = type(type.__dict__)
 SimpleNamespace = type(sys.implementation)
+DeferType = type(defer ())
 
 def _cell_factory():
     a = 1
